@@ -1,0 +1,278 @@
+import { useState, useContext } from "react";
+import UserContext from "../contexts/UserContext";
+import { updateUser, deleteUser } from "../api/user";
+import defaultAvatar from "../assets/default-avatar.png";
+import editIcon from "../assets/edit.png";
+import hide_icon from "../assets/hide.png";
+import view_icon from "../assets/view.png";
+
+
+export default function Setting() {
+  const { user, setUser } = useContext(UserContext);
+
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarEdit, setAvatarEdit] = useState(false);
+  const [avatarLoading, setAvatarLoading] = useState(false);
+
+  const [displayName, setDisplayName] = useState(user.display_name || "");
+  const [displayNameEdit, setDisplayNameEdit] = useState(false);
+  const [displayNameLoading, setDisplayNameLoading] = useState(false);
+
+  const [passwordEdit, setPasswordEdit] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
+  const [message, setMessage] = useState("");
+
+  // ---------------- Avatar ----------------
+  const handleAvatarChange = (e) => {
+    const file = e.target.files[0];
+    if (file) setAvatarFile(file);
+  };
+
+  const saveAvatar = async () => {
+    if (!avatarFile) return;
+    setAvatarLoading(true);
+    setMessage("");
+    try {
+      const res = await updateUser(user.user_id, { avatarFile });
+      setUser({ ...user, avatar: res.data.avatar || user.avatar });
+      setMessage("Avatar updated successfully");
+      setAvatarFile(null);
+      setAvatarEdit(false);
+    } catch (err) {
+      console.error(err);
+      setMessage("Failed to update avatar");
+    }
+    setAvatarLoading(false);
+  };
+
+  // ---------------- Display Name ----------------
+  const saveDisplayName = async () => {
+    setDisplayNameLoading(true);
+    setMessage("");
+    try {
+      const res = await updateUser(user.user_id, { display_name: displayName });
+      setUser({ ...user, display_name: displayName });
+      setMessage("Display name updated successfully");
+      setDisplayNameEdit(false);
+    } catch (err) {
+      console.error(err);
+      setMessage("Failed to update display name");
+    }
+    setDisplayNameLoading(false);
+  };
+
+  // ---------------- Password ----------------
+  const savePassword = async () => {
+    if (newPassword !== confirmPassword) {
+      setMessage("New password and confirm password do not match");
+      return;
+    }
+    setPasswordLoading(true);
+    setMessage("");
+    try {
+      await updateUser(user.user_id, { currentPassword, password: newPassword });
+      setMessage("Password updated successfully");
+      setPasswordEdit(false);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      console.error(err);
+      setMessage("Failed to update password or Incorrect current password");
+    }
+    setPasswordLoading(false);
+  };
+
+  // ---------------- Delete Account ----------------
+  const handleDelete = async () => {
+    const confirmed = window.prompt("Type your password to confirm account deletion:");
+    if (!confirmed) return;
+
+    try {
+      await deleteUser(user.user_id);
+      window.location.href = "/login";
+    } catch (err) {
+      console.error(err);
+      setMessage("Failed to delete account");
+    }
+  };
+
+  return (
+    <div className="d-flex flex-column align-items-center h-100">
+      <div className="w-75">
+        <h3 className="text-start my-4 fw-bold">Settings</h3>
+      </div>
+
+      {/* Avatar */}
+      <div className="w-50 my-3 d-flex flex-column align-items-center">
+        <label className="text-start fs-5 fw-semibold w-100 mb-2">Profile picture</label>
+        <div className="w-25 rounded-circle overflow-hidden ratio ratio-1x1" >
+          <img
+            src={user.avatar || defaultAvatar}
+            alt="Avatar"
+            className="w-100 h-100"
+            style={{ objectFit: "cover" }}
+          />
+        </div>
+
+        <div className="w-25 d-flex justify-content-end">
+          <button className="btn btn-light btn-sm" onClick={() => setAvatarEdit((prev) => !prev)}>
+            <img src={editIcon} alt="edit" style={{ width: "1rem", height: "1rem" }} />
+          </button>
+        </div>
+
+        {avatarEdit && (
+          <div className="d-flex justify-content-between w-100 mt-2">
+            <input type="file" accept="image/*" onChange={handleAvatarChange} />
+            <div className="d-flex gap-2">
+              <button className="btn btn-primary btn-sm" onClick={saveAvatar} disabled={avatarLoading || !avatarFile}>
+                {avatarLoading ? "Saving..." : "Save"}
+              </button>
+              <button className="btn btn-secondary btn-sm" onClick={() => { setAvatarFile(null); setAvatarEdit(false); }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Display Name */}
+      <div className="w-50 my-3 d-flex flex-column align-items-start">
+        <label className="text-start fs-5 fw-semibold w-100 mb-2">Display Name</label>
+
+        <div className="position-relative w-100">
+          {!displayNameEdit ? (
+            <div className="d-flex align-items-center gap-2">
+              <span>{displayName}</span>
+              <button
+                className="btn btn-light btn-sm position-absolute end-0 top-0 translate-middle-y"
+                onClick={() => setDisplayNameEdit(true)}
+              >
+                <img src={editIcon} alt="edit" style={{ width: "1rem", height: "1rem" }} />
+              </button>
+            </div>
+          ) : (
+            <div className="d-flex gap-2 mt-2">
+              <input
+                type="text"
+                className="form-control"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+              />
+              <button className="btn btn-primary btn-sm" onClick={saveDisplayName} disabled={displayNameLoading}>
+                {displayNameLoading ? "Saving..." : "Save"}
+              </button>
+              <button className="btn btn-secondary btn-sm" onClick={() => setDisplayNameEdit(false)}>
+                Cancel
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Password */}
+      <div className="w-50 my-3 d-flex flex-column align-items-start">
+        <label className="text-start fs-5 fw-semibold w-100 mb-2">Password</label>
+
+        <div className="position-relative w-100">
+          {!passwordEdit ? (
+            <button
+              className="btn btn-link btn-sm position-absolute start-0 text-decoration-none text-secondary"
+              onClick={() => setPasswordEdit(true)}
+            >
+              Change Password
+            </button>
+          ) : (
+            <div className="d-flex flex-column gap-2 mt-2">
+              {/* Current Password */}
+              <input
+                type="password"
+                className="form-control mb-3"
+                placeholder="Current Password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+              {/* New Password */}
+              <div className="position-relative">
+                <input
+                  type={showNewPassword ? "text" : "password"}
+                  className="form-control"
+                  placeholder="New Password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNewPassword(!showNewPassword)}
+                  className="btn btn-sm position-absolute top-50 end-0 translate-middle-y"
+                >
+                  <img
+                    src={showNewPassword ? hide_icon : view_icon}
+                    alt={showNewPassword ? "Hide" : "Show"}
+                    style={{ width: "20px", height: "20px" }}
+                  />
+                </button>
+              </div>
+              {/* Confirm Password */}
+              <div className="position-relative">
+                <input
+                  type={showConfirm ? "text" : "password"}
+                  className="form-control"
+                  placeholder="Confirm New Password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="btn btn-sm position-absolute top-50 end-0 translate-middle-y"
+                >
+                  <img
+                    src={showConfirm ? hide_icon : view_icon}
+                    alt={showConfirm ? "Hide" : "Show"}
+                    style={{ width: "20px", height: "20px" }}
+                  />
+                </button>
+              </div>
+              <div className="d-flex gap-2">
+                <button className="btn btn-primary btn-sm" onClick={savePassword} disabled={passwordLoading}>
+                  {passwordLoading ? "Saving..." : "Save Password"}
+                </button>
+                <button className="btn btn-secondary btn-sm"
+                  onClick={() => {
+                    setPasswordEdit(false);
+                    setCurrentPassword("");
+                    setNewPassword("");
+                    setConfirmPassword("");
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Delete Account */}
+      <div className="w-50 my-5">
+        <button className="btn btn-danger w-100" onClick={handleDelete}>Delete Account</button>
+      </div>
+
+      {message && <p className="text-success my-2">{message}</p>}
+
+      {/* Created by */}
+      <footer className="mt-auto pt-3 w-100 text-center d-flex flex-row align-items-center justify-content-start border-top">
+        <small className="text-muted">&copy; 2025 ektasaeng w.</small>
+      </footer>
+
+    </div>
+  );
+}
+
