@@ -26,16 +26,17 @@ export async function ensureGoogleAccessToken(req, res, next) {
     });
 
     try {
-      // ตรวจสอบ token validity
+      // Check token validity
       await oAuth2Client.getTokenInfo(user.provider_access_token);
-      // token ยัง valid
+
+      // token is still valid
       req.googleAccessToken = user.provider_access_token;
+      
     } catch (err) {
-      // ถ้า access token หมดอายุ → refresh
+      // if access token expired → refresh
       const newTokens = await oAuth2Client.refreshAccessToken();
       const { access_token } = newTokens.credentials;
 
-      // อัปเดต DB
       await User.updateTokens(userId, access_token, user.provider_refresh_token);
 
       req.googleAccessToken = access_token;

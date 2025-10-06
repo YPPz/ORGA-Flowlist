@@ -17,7 +17,6 @@ export default function Home() {
         const fetchEvents = async () => {
             try {
                 const data = await getEvents(7);
-                console.log(data)
                 setEvents(data);
             } catch (err) {
                 setError("Failed to load events");
@@ -33,8 +32,6 @@ export default function Home() {
     const upcomingEvents = events.sort(
         (a, b) => new Date(a.start_time) - new Date(b.start_time)
     );
-
-    console.log("upcoming >> ", upcomingEvents)
 
 
     if (error) {

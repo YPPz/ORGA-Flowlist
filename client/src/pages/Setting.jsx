@@ -28,7 +28,7 @@ export default function Setting() {
 
   const [message, setMessage] = useState("");
 
-  // ---------------- Avatar ----------------
+  // Avatar 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) setAvatarFile(file);
@@ -51,7 +51,7 @@ export default function Setting() {
     setAvatarLoading(false);
   };
 
-  // ---------------- Display Name ----------------
+  // Display Name
   const saveDisplayName = async () => {
     setDisplayNameLoading(true);
     setMessage("");
@@ -67,7 +67,7 @@ export default function Setting() {
     setDisplayNameLoading(false);
   };
 
-  // ---------------- Password ----------------
+  // Password
   const savePassword = async () => {
     if (newPassword !== confirmPassword) {
       setMessage("New password and confirm password do not match");
@@ -89,13 +89,24 @@ export default function Setting() {
     setPasswordLoading(false);
   };
 
-  // ---------------- Delete Account ----------------
+  // Delete Account
   const handleDelete = async () => {
-    const confirmed = window.prompt("Type your password to confirm account deletion:");
-    if (!confirmed) return;
-
     try {
-      await deleteUser(user.user_id);
+      let password = null;
+
+      if (user.has_password) {
+        password = window.prompt("Type your password to confirm account deletion:");
+        if (!password) return;
+      } else if (user.provider) {
+        const confirmed = window.confirm(
+          `Are you sure you want to delete your ${user.provider} account (${user.email}) from this app? 
+This will remove your data and events linked to ORGA Flowlist, but your ${user.provider} account will not be affected.`
+        );
+
+        if (!confirmed) return;
+      }
+
+      await deleteUser(user.user_id, password);
       window.location.href = "/login";
     } catch (err) {
       console.error(err);
@@ -176,89 +187,91 @@ export default function Setting() {
         </div>
       </div>
 
-      {/* Password */}
-      <div className="w-50 my-3 d-flex flex-column align-items-start">
-        <label className="text-start fs-5 fw-semibold w-100 mb-2">Password</label>
+      {/* Password (only if normal account) */}
+      {!user.provider && (
+        <div className="w-50 my-3 d-flex flex-column align-items-start">
+          <label className="text-start fs-5 fw-semibold w-100 mb-2">Password</label>
 
-        <div className="position-relative w-100">
-          {!passwordEdit ? (
-            <button
-              className="btn btn-link btn-sm position-absolute start-0 text-decoration-none text-secondary"
-              onClick={() => setPasswordEdit(true)}
-            >
-              Change Password
-            </button>
-          ) : (
-            <div className="d-flex flex-column gap-2 mt-2">
-              {/* Current Password */}
-              <input
-                type="password"
-                className="form-control mb-3"
-                placeholder="Current Password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-              />
-              {/* New Password */}
-              <div className="position-relative">
+          <div className="position-relative w-100">
+            {!passwordEdit ? (
+              <button
+                className="btn btn-link btn-sm position-absolute start-0 text-decoration-none text-secondary"
+                onClick={() => setPasswordEdit(true)}
+              >
+                Change Password
+              </button>
+            ) : (
+              <div className="d-flex flex-column gap-2 mt-2">
+                {/* Current Password */}
                 <input
-                  type={showNewPassword ? "text" : "password"}
-                  className="form-control"
-                  placeholder="New Password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  type="password"
+                  className="form-control mb-3"
+                  placeholder="Current Password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="btn btn-sm position-absolute top-50 end-0 translate-middle-y"
-                >
-                  <img
-                    src={showNewPassword ? hide_icon : view_icon}
-                    alt={showNewPassword ? "Hide" : "Show"}
-                    style={{ width: "20px", height: "20px" }}
+                {/* New Password */}
+                <div className="position-relative">
+                  <input
+                    type={showNewPassword ? "text" : "password"}
+                    className="form-control"
+                    placeholder="New Password"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
                   />
-                </button>
-              </div>
-              {/* Confirm Password */}
-              <div className="position-relative">
-                <input
-                  type={showConfirm ? "text" : "password"}
-                  className="form-control"
-                  placeholder="Confirm New Password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirm(!showConfirm)}
-                  className="btn btn-sm position-absolute top-50 end-0 translate-middle-y"
-                >
-                  <img
-                    src={showConfirm ? hide_icon : view_icon}
-                    alt={showConfirm ? "Hide" : "Show"}
-                    style={{ width: "20px", height: "20px" }}
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="btn btn-sm position-absolute top-50 end-0 translate-middle-y"
+                  >
+                    <img
+                      src={showNewPassword ? hide_icon : view_icon}
+                      alt={showNewPassword ? "Hide" : "Show"}
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                  </button>
+                </div>
+                {/* Confirm Password */}
+                <div className="position-relative">
+                  <input
+                    type={showConfirm ? "text" : "password"}
+                    className="form-control"
+                    placeholder="Confirm New Password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                   />
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirm(!showConfirm)}
+                    className="btn btn-sm position-absolute top-50 end-0 translate-middle-y"
+                  >
+                    <img
+                      src={showConfirm ? hide_icon : view_icon}
+                      alt={showConfirm ? "Hide" : "Show"}
+                      style={{ width: "20px", height: "20px" }}
+                    />
+                  </button>
+                </div>
+                <div className="d-flex gap-2">
+                  <button className="btn btn-primary btn-sm" onClick={savePassword} disabled={passwordLoading}>
+                    {passwordLoading ? "Saving..." : "Save Password"}
+                  </button>
+                  <button className="btn btn-secondary btn-sm"
+                    onClick={() => {
+                      setPasswordEdit(false);
+                      setCurrentPassword("");
+                      setNewPassword("");
+                      setConfirmPassword("");
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
-              <div className="d-flex gap-2">
-                <button className="btn btn-primary btn-sm" onClick={savePassword} disabled={passwordLoading}>
-                  {passwordLoading ? "Saving..." : "Save Password"}
-                </button>
-                <button className="btn btn-secondary btn-sm"
-                  onClick={() => {
-                    setPasswordEdit(false);
-                    setCurrentPassword("");
-                    setNewPassword("");
-                    setConfirmPassword("");
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Delete Account */}
       <div className="w-50 my-5">

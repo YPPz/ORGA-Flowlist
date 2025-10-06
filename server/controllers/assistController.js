@@ -54,7 +54,7 @@ export const askAssistant = async (req, res) => {
     console.log("Raw AI response:", aiResponse);
     console.log("Parsed AI actions:", parsed.actions);
 
-    // AI ส่ง summary + actions
+    // AI sends summary + actions
     const { summary, actions } = parsed;
     const results = [];
 

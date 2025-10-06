@@ -1,6 +1,5 @@
 import Category from "../models/Category.js";
 
-// ดึง category ทั้งหมดสำหรับ user
 export const getCategories = (req, res) => {
   const userId = req.user.user_id;
   Category.getAllCategoriesByUser(userId)
@@ -8,7 +7,6 @@ export const getCategories = (req, res) => {
     .catch(() => res.status(500).json({ message: "Server error" }));
 };
 
-// สร้าง category ใหม่
 export const createCategory = async (req, res) => {
   try {
     const userId = req.user.user_id;
@@ -27,7 +25,6 @@ export const createCategory = async (req, res) => {
   }
 };
 
-// อัพเดท category ของ user
 export const updateCategory = async (req, res) => {
   const userId = req.user.user_id;
   const { id } = req.params;
@@ -41,7 +38,6 @@ export const updateCategory = async (req, res) => {
   }
 };
 
-// ลบ category ของ user
 export const deleteCategory = async (req, res) => {
   const userId = req.user.user_id;
   const { id } = req.params;

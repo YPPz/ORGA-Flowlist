@@ -141,10 +141,10 @@ export default function CalendarPage() {
                         }}
                     />
 
-                    {/* ปุ่ม create event */}
                     <div className="position-absolute  bottom-0 end-0 pe-3 pb-3 z-3" >
                         <CreateEventButton className="create-event-btn" label="+" />
                     </div>
+
                 </div>
             )}
             {/* popup overlay */}

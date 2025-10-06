@@ -5,7 +5,6 @@ import notification_icon from "../assets/notification.png"
 
 
 export default function Notification() {
-
     const [open, setOpen] = useState(false);
     const [upcomingEvents, setUpcomingEvents] = useState([]);
 

@@ -22,12 +22,6 @@ export default function ResetPassword() {
       return;
     }
 
-    // ตัวอย่าง validation เพิ่มเติม (optional)
-    // if (password.length < 8) {
-    //   setMessage("Password must be at least 8 characters");
-    //   return;
-    // }
-
     try {
       const res = await resetPassword(token, password);
       setMessage(res.message);

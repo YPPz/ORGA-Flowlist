@@ -50,8 +50,8 @@ export default function Register() {
                     <div
                         className="p-5 rounded-4 shadow w-75"
                         style={{
-                            backgroundColor: "rgba(255, 255, 255, 0.8)", // โปร่งใสนิดๆ
-                            backdropFilter: "blur(6px)", // ให้ effect modern
+                            backgroundColor: "rgba(255, 255, 255, 0.8)", 
+                            backdropFilter: "blur(6px)", 
                             border: "1px solid rgba(255,255,255,0.2)",
                         }}
                     >

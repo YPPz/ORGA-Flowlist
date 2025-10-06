@@ -10,7 +10,7 @@ const googleToApp = (googleEvent, user_id) => ({
   details: googleEvent.description || "",
   start_time: googleEvent.start?.dateTime || googleEvent.start?.date || "",
   end_time: googleEvent.end?.dateTime || googleEvent.end?.date || "",
-  priority: null, // default
+  priority: null,
   user_id: user_id,
   category_id: null,
   category_name: "",
@@ -41,7 +41,7 @@ const appToGoogle = (data, existingGoogleEvent = {}) => {
 };
 
 /**
- * Helper functions แยกว่าเป็น google login || others login
+ * Helper functions: differentiate between Google login || other logins
  */
 
 export const listEventsRaw = async (user, googleAccessToken) => {
@@ -60,7 +60,6 @@ export const listEventsRaw = async (user, googleAccessToken) => {
 
 export const createEventRaw = async (user, data, googleAccessToken) => {
   try {
-    // --- Fix: ensure end_time always exists (start+1hr) ---
     let start = data.start_time ? new Date(data.start_time) : null;
     let end = data.end_time ? new Date(data.end_time) : null;
     if (start && !end) {
@@ -74,7 +73,8 @@ export const createEventRaw = async (user, data, googleAccessToken) => {
       return googleToApp(createdEvent, user.user_id);
     }
 
-    // 🟢 Local DB: แปลง format ก่อน
+    // 🟢 Local DB: transform format before use
+
     const dbEventData = {
       ...data,
       start_time: dayjs(start).format("YYYY-MM-DD HH:mm:ss"),
@@ -83,7 +83,6 @@ export const createEventRaw = async (user, data, googleAccessToken) => {
     };
 
     return await Event.createEvent(dbEventData);
-    // return await Event.createEvent({ ...data, user_id: user.user_id });
 
   } catch (err) {
     console.error("Error in createEventRaw:", err);
@@ -100,7 +99,6 @@ export const updateEventRaw = async (user, eventId, data, googleAccessToken) => 
       return googleToApp(updatedEvent, user.user_id);
     }
 
-    // สำหรับ local DB
     const event = await Event.getEventById(eventId);
     if (!event) throw new Error('Event not found');
     if (event.user_id !== user.user_id) throw new Error('Not authorized');
@@ -130,8 +128,9 @@ export const deleteEventRaw = async (user, eventId, googleAccessToken) => {
   }
 };
 
+
 /**
- * Controller functions สำหรับ routes
+ * Controller functions for routes
  */
 export const listEvents = async (req, res) => {
   try {
@@ -149,7 +148,6 @@ export const listEvents = async (req, res) => {
       });
     }
 
-    // res.json(events);
     res.json({
       success: true,
       count: events.length,

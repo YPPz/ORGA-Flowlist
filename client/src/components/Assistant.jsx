@@ -13,7 +13,7 @@ export default function Assistant() {
   const toggleChat = () => setOpen(!open);
   const { user } = useUser();
 
-  // โหลดข้อความเก่าของ user ปัจจุบัน
+  // Load previous messages for the current user
   useEffect(() => {
     const saved = localStorage.getItem("assistantMessages");
     if (saved) {
@@ -27,7 +27,7 @@ export default function Assistant() {
     }
   }, [user.user_id]);
 
-  // เซฟ messages ทั้งหมด (ทุก user) แต่ filter ให้เก็บทุก user ด้วย
+  // Save all messages (for all users) but filter to keep every user's history
   useEffect(() => {
     if (messages.length === 0) return;
 
@@ -42,7 +42,7 @@ export default function Assistant() {
     localStorage.setItem("assistantMessages", JSON.stringify(combined));
   }, [messages, user.user_id]);
 
-  // ล้างแชทของ user ปัจจุบัน
+  // Clear chat history for the current user
   const clearChat = () => {
     const saved = localStorage.getItem("assistantMessages");
     let allMessages = [];
@@ -55,7 +55,6 @@ export default function Assistant() {
     setMessages([]);
   };
 
-  // scroll แชทลงท้ายอัตโนมัติ
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -77,7 +76,6 @@ export default function Assistant() {
     };
     const typingId = `ai-typing-${timestampId}`;
 
-    // เพิ่ม user message + typing
     setMessages(prev => [
       ...prev,
       userMessage,
@@ -86,21 +84,21 @@ export default function Assistant() {
     setInput("");
 
     try {
-      // ส่งเฉพาะข้อความของ user ปัจจุบันไปให้ AI
+      // Send only the current user's messages to the AI
       const response = await sendMessageToAI(
         messages.filter(m => m.user_id === user.user_id).concat(userMessage)
       );
 
-      // เอา "กำลังพิมพ์..." ออก + ใส่ข้อความตอบกลับ
+      // Remove "typing..." and add AI response
       if (response?.summary) {
         setMessages(prev => [
           ...prev.filter(m => m.id !== typingId),
           { role: "ai", text: response.summary, user_id: user.user_id },
         ]);
 
-        // ถ้า backend บอกว่ามี CRUD สำเร็จ → reload events
         if (response.results?.some(r => r.success)) {
-          const refreshed = await getEvents();
+          const days = location.pathname === "/" ? 7 : null;
+          const refreshed = await getEvents(days);
           setEvents(refreshed);
         }
       } else {

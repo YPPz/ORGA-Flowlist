@@ -48,12 +48,17 @@ export const updateUser = async (userId, { display_name, currentPassword, passwo
 };
 
 
-export const deleteUser = async (userId) => {
+export const deleteUser = async (userId, password) => {
   try {
-    const res = await fetch(`${API_URL}/api/users/${userId}`, {
+    const options = {
       method: "DELETE",
       credentials: "include",
-    });
+      headers: { "Content-Type": "application/json" },
+    };
+
+    if (password) options.body = JSON.stringify({ password });
+
+    const res = await fetch(`${API_URL}/api/users/${userId}`, options);
 
     if (!res.ok) {
       const error = await res.json();

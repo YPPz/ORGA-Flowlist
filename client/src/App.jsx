@@ -19,7 +19,6 @@ function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        // เรียก login/success ก่อนเพื่อดูว่า session มีหรือไม่
         const res = await fetch(`${API_URL}/auth/login/success`, {
           method: "GET",
           credentials: "include",

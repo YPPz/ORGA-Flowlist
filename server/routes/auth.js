@@ -11,7 +11,6 @@ router.post("/register", register);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
 router.get("/login/success", loginSuccess);
-// router.get("/login/failed", loginFailed);
 router.get("/logout", logout);
 
 // Facebook

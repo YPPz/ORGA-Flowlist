@@ -11,17 +11,15 @@ passport.use(new GoogleStrategy({
   try {
     const email = profile.emails[0].value;
 
-    // 1. หา user จาก email ก่อน
+    // 1. Find user by email 
     let existingUser = await User.findByEmail(email);
 
     if (existingUser.length) {
       const user = existingUser[0];
       if (user.provider !== 'google') {
-        // เจอ email ซ้ำ แต่สมัครด้วย provider อื่น
         return done(null, false);
       }
 
-      // ✅ provider = google → อัปเดต token
       await User.updateTokens(
         user.user_id,
         accessToken,
@@ -30,7 +28,7 @@ passport.use(new GoogleStrategy({
       return done(null, { ...user, accessToken, refreshToken });
     }
 
-    // 2. ถ้าไม่มี user → สมัครใหม่
+    // 2. If user not found → create a new account
     let avatarUrl = null;
     if (profile.photos?.length) {
       try {

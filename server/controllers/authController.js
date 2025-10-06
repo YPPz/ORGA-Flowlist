@@ -5,7 +5,6 @@ import User from "../models/User.js";
 import passport from "passport";
 import { getSafeUser } from "../helpers/getSafeUser.js";
 
-// Login
 export const login = (req, res, next) => {
     passport.authenticate("local", (err, user, info) => {
         if (err) return next(err);
@@ -18,7 +17,6 @@ export const login = (req, res, next) => {
     })(req, res, next);
 };
 
-// Register
 export const register = async (req, res) => {
     const { email, password, display_name } = req.body;
 
@@ -29,7 +27,6 @@ export const register = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        console.log('Hashed password:', hashedPassword);
 
         await User.createUser({ email, display_name, password: hashedPassword });
         return res.status(201).json({ success: true, message: "Register successful" });
@@ -40,7 +37,6 @@ export const register = async (req, res) => {
     }
 };
 
-// Forgot password
 export const forgotPassword = async (req, res) => {
     const { email } = req.body;
 
@@ -63,7 +59,6 @@ export const forgotPassword = async (req, res) => {
                 reset_token_expire: resetTokenExpire,
             });
 
-            // ส่ง email (ใช้ nodemailer + Gmail/SMTP)
             const transporter = nodemailer.createTransport({
                 service: "gmail",
                 auth: {
@@ -96,7 +91,6 @@ export const forgotPassword = async (req, res) => {
     }
 };
 
-// Reset password
 export const resetPassword = async (req, res) => {
     const { token } = req.params;
     const { password } = req.body;
@@ -127,7 +121,6 @@ export const resetPassword = async (req, res) => {
     }
 };
 
-// Login success
 export const loginSuccess = (req, res) => {
     if (req.user) {
         return res.status(200).json({
@@ -140,7 +133,6 @@ export const loginSuccess = (req, res) => {
     }
 };
 
-// Logout
 export const logout = (req, res, next) => {
     req.logout(function (err) {
         if (err) return next(err);

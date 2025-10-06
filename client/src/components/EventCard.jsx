@@ -11,8 +11,6 @@ export default function EventCard({ event, onDelete, onUpdate }) {
     const [isEditing, setIsEditing] = useState(false);
     const [isOther, setIsOther] = useState(false);
     const [editedEvent, setEditedEvent] = useState({ ...event });
-
-    // สำหรับ modal animation
     const [showModal, setShowModal] = useState(false);
     const [animate, setAnimate] = useState(false);
 
@@ -22,7 +20,7 @@ export default function EventCard({ event, onDelete, onUpdate }) {
 
     const openModal = () => {
         setShowModal(true);
-        setTimeout(() => setAnimate(true), 10); // trigger animation
+        setTimeout(() => setAnimate(true), 10);
     };
 
     const closeModal = () => {
@@ -48,11 +46,11 @@ export default function EventCard({ event, onDelete, onUpdate }) {
                     user_id: editedEvent.user_id,
                 });
 
-                // fetch ใหม่จาก DB เพื่อให้ข้อมูลครบ
+                // Fetch again from DB to ensure updated data
                 const latestCategories = await getCategories();
                 setCategories(latestCategories);
 
-                // อัปเดต selected category ให้ตรงกับชื่อใหม่
+                // Update selected category to match the new name
                 const newCat = latestCategories.find(c => c.name === editedEvent.newCategoryName.trim());
                 categoryId = newCat?.category_id;
                 setEditedEvent(prev => ({ ...prev, category_id: categoryId }));
@@ -159,7 +157,7 @@ export default function EventCard({ event, onDelete, onUpdate }) {
                             opacity: animate ? 1 : 0,
                             transition: "transform 0.25s ease, opacity 0.25s ease",
                         }}
-                        onClick={(e) => e.stopPropagation()} // ป้องกัน overlay ปิด
+                        onClick={(e) => e.stopPropagation()}
                     >
                         <h3 className="mb-4 text-center fw-bold">Update Event</h3>
 

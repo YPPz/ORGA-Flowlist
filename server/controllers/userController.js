@@ -5,12 +5,11 @@ import streamifier from "streamifier";
 import bcrypt from "bcrypt";
 import { getSafeUser } from "../helpers/getSafeUser.js";
 
-// Multer middleware
-const upload = multer(); // memory storage
+const upload = multer();
 
 export const uploadAvatarMiddleware = upload.single("avatar");
 
-// GET all users
+
 export const getAllUsers = async (req, res) => {
   try {
     const results = await User.getAllUsers();
@@ -21,7 +20,7 @@ export const getAllUsers = async (req, res) => {
   }
 };
 
-// GET user by id
+
 export const getUserById = async (req, res) => {
   if (parseInt(req.params.id, 10) !== req.user.user_id) {
     return res.status(403).json({ success: false, message: "Forbidden" });
@@ -40,7 +39,7 @@ export const getUserById = async (req, res) => {
   }
 };
 
-// CREATE user
+
 export const createUser = async (req, res) => {
   const userData = req.body;
   if (!userData.email) return res.status(400).json({ success: false, message: "Email is required" });
@@ -57,7 +56,7 @@ export const createUser = async (req, res) => {
   }
 };
 
-// UPDATE user 
+
 export const updateUser = async (req, res) => {
   try {
     if (parseInt(req.params.id, 10) !== req.user.user_id) {
@@ -69,14 +68,11 @@ export const updateUser = async (req, res) => {
 
     const updateData = {};
 
-    // -------- Display Name --------
     if (req.body.display_name) {
       updateData.display_name = req.body.display_name;
     }
 
-    // -------- Password --------
     if (req.body.password) {
-
       if (!req.body.currentPassword) {
         return res.status(400).json({ success: false, message: "Current password is required" });
       }
@@ -85,19 +81,15 @@ export const updateUser = async (req, res) => {
       const user = results[0];
       if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-      // เช็ค old password
       const isMatch = await bcrypt.compare(req.body.currentPassword, user.password);
       if (!isMatch) {
         return res.status(400).json({ success: false, message: "Invalid password update request" });
       }
 
-      // hash new password
       updateData.password = await bcrypt.hash(req.body.password, 10);
 
     }
-    //TODO: เพิ่ม bcrypt.compare กับ current password // ---- DONE ----
 
-    // -------- Avatar --------
     if (req.file) {
       const streamUpload = () =>
         new Promise((resolve, reject) => {
@@ -131,26 +123,50 @@ export const updateUser = async (req, res) => {
   }
 };
 
-// DELETE user
 export const deleteUser = async (req, res) => {
   if (parseInt(req.params.id, 10) !== req.user.user_id) {
-    return res.status(403).json({ success: false, message: "Forbidden: Cannot delete other users' accounts" });
+    return res.status(403).json({ success: false, message: "Forbidden" });
   }
 
   try {
-    // 1. ดึง public_id ของ avatar ก่อน
-    const results = await User.getUserById(req.user.user_id);
-    const user = results[0];
+    const [user] = await User.getUserById(req.user.user_id);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
 
-    // 2. ลบ avatar ใน Cloudinary (ถ้ามี)
-    if (user.avatar) {
-      // สมมติเราใช้ public_id แบบ "user_<user_id>"
-      const public_id = `avatars/user_${req.user.user_id}`;
-      await cloudinary.uploader.destroy(public_id);
+    // Check password only for normal login users
+    const { password } = req.body || {};
+    if (user.password) {
+      if (!password) {
+        return res.status(400).json({ success: false, message: "Password required to delete this account" });
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(401).json({ success: false, message: "Incorrect password" });
+      }
+    } else if (user.provider) {
+      console.log(`Deleting provider user (${user.user_id} ${user.email} ${user.provider})`);
     }
 
-    // 3. ลบ user จาก DB
+    // Delete avatar in Cloudinary if available
+    if (user.avatar) {
+      let public_id;
+
+      if (user.provider === 'google') {
+        public_id = `avatars/google_${user.provider_id}`;
+      } else if (user.provider === 'facebook') {
+        public_id = `avatars/facebook_${user.provider_id}`;
+      } else {
+        public_id = `avatars/user_${req.user.user_id}`;
+      }
+      
+      try {
+        const result = await cloudinary.uploader.destroy(public_id);
+        console.log("Cloudinary delete result:", result);
+      } catch (err) {
+        console.error("Cloudinary delete failed:", err);
+      }
+    }
+
     const result = await User.deleteUser(req.user.user_id);
     if (result.affectedRows === 0) {
       return res.status(404).json({ success: false, message: "User not found" });

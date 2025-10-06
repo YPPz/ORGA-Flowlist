@@ -1,6 +1,6 @@
 import { google } from 'googleapis';
 
-// สร้าง OAuth2 client จาก access token ของ user
+// Create OAuth2 client from user's access token
 export function getCalendarClient(accessToken) {
   const oAuth2Client = new google.auth.OAuth2();
   oAuth2Client.setCredentials({ access_token: accessToken });

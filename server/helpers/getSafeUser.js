@@ -8,5 +8,8 @@ export function getSafeUser(user) {
         provider_refresh_token,
         ...safeUser
     } = user;
-    return safeUser;
+    return {
+        ...safeUser,
+        has_password: !!user.password,
+    };
 }
