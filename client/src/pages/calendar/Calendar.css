@@ -83,16 +83,24 @@
 }
 
 .fc-daygrid-day.fc-day-today .fc-daygrid-day-number {
-  color: #1f2937 !important;
+  color: #37231f !important;
   font-weight: 600;
   background-color: #dedede;
   border-radius: 50%;
   padding: 2px 6px;
 }
 
-/* === Calendar Cells === */
-.fc-daygrid-day {
-  border: 1px solid #efe9e9 !important;
+/* === +more link === */
+.fc-daygrid-more-link {
+  display: block !important;
+  font-size: 0.75rem;
+  color: #555 !important;
+  font-weight: 500;
+}
+
+.fc-daygrid-more-link:hover {
+  background: #f0f0f0;
+  color: #000 !important;
 }
 
 /* === Event Appearance === */
@@ -102,6 +110,7 @@
   border-radius: 12px !important;
   background: #f8f8f8 !important;
   padding: 4px 8px;
+  height: 1.5rem;
   font-size: 0.85rem;
   font-weight: 500;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px !important;
@@ -214,15 +223,10 @@
   }
 }
 
- @media (max-width: 480px) {
+@media (max-width: 480px) {
   .fc-toolbar-title {
     font-size: 0.9rem !important;
     text-align: center;
-  }
-
-  .fc-header-toolbar {
-    flex-wrap: wrap !important;
-    justify-content: space-between !important;
   }
 
   .fc .fc-button {

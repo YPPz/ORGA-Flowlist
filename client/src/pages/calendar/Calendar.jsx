@@ -121,6 +121,7 @@ export default function CalendarPage() {
                         eventClick={handleEventClick}
                         eventDrop={handleEventChange}
                         eventResize={handleEventChange}
+                        dayMaxEvents={true}
                         headerToolbar={{
                             left: "prev,next today",
                             center: "title",
