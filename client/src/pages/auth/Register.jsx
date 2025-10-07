@@ -33,89 +33,38 @@ export default function Register() {
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center vh-100 w-100 bg-body-tertiary">
-            <div className="row w-75 h-50 shadow-lg rounded-4 overflow-hidden">
-                <div className="col-6 bg-dark text-white p-5 d-flex flex-column align-items-center justify-content-center text-center">
-                    <h1 className="fw-bolder display-3">ORGA Flowlist</h1>
-                    <p className="mt-3 mb-5 fs-5">
-                        Transform the way you organize your life.
-                        <br />Manage tasks, schedule events, and plan ahead —
-                        <br />all in one seamless flow.
-                        <br /><br />
-                        Work smarter. Plan better. Stay in control.
+        <div className="d-flex justify-content-center align-items-center min-vh-100 w-100 bg-body-tertiary px-3">
+            <div className="row w-100 shadow-lg rounded-4 overflow-hidden" style={{ maxWidth: "1000px" }}>
+                {/* Left */}
+                <div className="col-12 col-md-6 bg-dark text-white p-5 text-center d-flex flex-column justify-content-center align-items-center">
+                    <h1 className="fw-bolder display-5 mb-4">ORGA Flowlist</h1>
+                    <p className="fs-6 mb-5">
+                        Transform the way you organize your life.<br />
+                        Manage tasks, schedule events, and plan ahead.
                     </p>
                 </div>
+
                 {/* Right */}
-                <div className="col-6 bg-dark text-white p-5 d-flex flex-column align-items-center justify-content-center text-center">
+                <div className="col-12 col-md-6 bg-light d-flex flex-column align-items-center justify-content-center p-4">
                     <div
-                        className="p-5 rounded-4 shadow w-75"
+                        className="p-4 rounded-4 shadow w-100"
                         style={{
-                            backgroundColor: "rgba(255, 255, 255, 0.8)", 
-                            backdropFilter: "blur(6px)", 
-                            border: "1px solid rgba(255,255,255,0.2)",
+                            maxWidth: "360px",
+                            backgroundColor: "rgba(255, 255, 255, 0.9)",
+                            backdropFilter: "blur(8px)",
                         }}
                     >
                         <h2 className="fw-bold mb-4 text-dark text-center">Register</h2>
                         <form onSubmit={handleSubmit}>
-                            <div className="mb-3">
-                                <input
-                                    type="text"
-                                    name="display_name"
-                                    className="form-control"
-                                    placeholder="Name"
-                                    value={formData.display_name}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <input
-                                    type="email"
-                                    name="email"
-                                    className="form-control"
-                                    placeholder="Email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <div className="mb-3">
-                                <input
-                                    type="password"
-                                    name="password"
-                                    className="form-control"
-                                    placeholder="Password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <input
-                                    type="password"
-                                    name="confirmPassword"
-                                    className="form-control"
-                                    placeholder="Confirm Password"
-                                    value={formData.confirmPassword}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                            <button
-                                type="submit"
-                                className="btn btn-dark w-100 mb-3 rounded-3"
-                                style={{ fontWeight: "600" }}
-                            >
-                                Register
-                            </button>
+                            <input type="text" name="display_name" className="form-control mb-3" placeholder="Name" value={formData.display_name} onChange={handleChange} required />
+                            <input type="email" name="email" className="form-control mb-3" placeholder="Email" value={formData.email} onChange={handleChange} required />
+                            <input type="password" name="password" className="form-control mb-3" placeholder="Password" value={formData.password} onChange={handleChange} required />
+                            <input type="password" name="confirmPassword" className="form-control mb-4" placeholder="Confirm Password" value={formData.confirmPassword} onChange={handleChange} required />
+                            <button type="submit" className="btn btn-dark w-100 mb-3">Register</button>
                         </form>
                         <p className="text-center small text-secondary">
                             Already have an account?{" "}
-                            <span
-                                className="text-primary fw-semibold"
-                                style={{ cursor: "pointer" }}
-                                onClick={() => navigate("/login")}
-                            >
+                            <span className="text-primary fw-semibold" style={{ cursor: "pointer" }} onClick={() => navigate("/login")}>
                                 Login
                             </span>
                         </p>
@@ -123,5 +72,6 @@ export default function Register() {
                 </div>
             </div>
         </div>
+
     );
 };

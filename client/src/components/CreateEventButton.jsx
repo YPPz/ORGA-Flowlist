@@ -96,29 +96,19 @@ export default function CreateEventButton({ className, label, ...props }) {
             </button>
 
             {showModal && (
-                <div
+                <div className="position-fixed top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center"
                     style={{
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
                         backgroundColor: "rgba(0,0,0,0.5)",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        zIndex: 1050,
                         opacity: animate ? 1 : 0,
                         transition: "opacity 0.25s ease",
+                        zIndex: 1050,
                     }}
                     onClick={closeModal}
                 >
-                    <div
+                    <div className="bg-white p-3 rounded"
                         style={{
-                            background: "white",
-                            borderRadius: "1rem",
-                            padding: "2rem",
-                            width: "700px",
+                            width: "90%",
+                            maxWidth: "700px",
                             maxHeight: "80vh",
                             overflowY: "auto",
                             transform: animate ? "scale(1)" : "scale(0.8)",
@@ -127,29 +117,31 @@ export default function CreateEventButton({ className, label, ...props }) {
                         }}
                         onClick={(e) => e.stopPropagation()}
                     >
-                        <h3 className="mb-4 text-center fw-bold">Create Event</h3>
+                        <h3 className="mb-4 text-center fw-bold" style={{ fontSize: "1.5rem" }}>Create Event</h3>
                         <form onSubmit={handleSubmit}>
-                            <input type="text" placeholder="Title" className="form-control form-control-lg mb-3"
+                            <input type="text" placeholder="Title" className="form-control mb-3"
                                 value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                 required
+                                style={{ fontSize: "1rem" }}
                             />
-                            <textarea placeholder="Details" className="form-control form-control-lg mb-3" rows={4}
+                            <textarea placeholder="Details" className="form-control mb-3" rows={4}
                                 value={formData.details}
                                 onChange={(e) => setFormData({ ...formData, details: e.target.value })}
+                                style={{ fontSize: "1rem" }}
                             />
                             <div className="row">
-                                <div className="col">
+                                <div className="col-12 col-md-6">
                                     <label className="form-label small text-muted">Start</label>
-                                    <input type="datetime-local" className="form-control form-control-lg mb-3"
+                                    <input type="datetime-local" className="form-control mb-3"
                                         value={formData.start_time}
                                         onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
                                         required
                                     />
                                 </div>
-                                <div className="col">
+                                <div className="col-12 col-md-6">
                                     <label className="form-label small text-muted">End</label>
-                                    <input type="datetime-local" className="form-control form-control-lg mb-3"
+                                    <input type="datetime-local" className="form-control mb-3"
                                         value={formData.end_time}
                                         onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
                                         required

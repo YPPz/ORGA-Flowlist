@@ -115,26 +115,34 @@ export default function EventCard({ event, onDelete, onUpdate }) {
     return (
         <>
             {!showModal && (
-                <div className="card shadow-sm border-0 rounded-4 position-relative py-2">
-                    <div className="position-absolute top-0 end-0 m-3 rounded"
-                        style={{ width: "18px", height: "18px", backgroundColor: getPriorityColor(event.priority) }}></div>
+                <div className="card shadow-sm border-0 rounded-4 position-relative py-2 px-2">
+                    {/* Priority indicator */}
+                    <div
+                        className="position-absolute top-0 end-0 m-3 rounded-circle"
+                        style={{ width: "18px", height: "18px", backgroundColor: getPriorityColor(event.priority), }}
+                    ></div>
+
                     <div className="card-body">
-                        <h4 className="card-title fw-bold">{event.title}</h4>
+                        <h5 className="card-title fw-bold">{event.title}</h5>
+
                         {event.category_id && event.category_name && (
-                            <span className="badge mb-2"
-                                style={{ background: getCategoryColors(event.category_name), borderRadius: "12px", color: "white", padding: "5px 12px", fontSize: "0.85rem" }}>
+                            <span
+                                className="badge mb-2 text-white"
+                                style={{ backgroundColor: getCategoryColors(event.category_name), borderRadius: "12px", padding: "5px 12px", fontSize: "0.85rem", }}
+                            >
                                 {event.category_name}
                             </span>
                         )}
-                        <p className="card-text text-gray-600 mb-1">{event.details}</p>
+
+                        <p className="card-text text-muted mb-1">{event.details}</p>
                         <p className="mb-1"><strong>Start:</strong> {formatForDisplay(event.start_time, "en-GB", "Asia/Bangkok")}</p>
                         <p className="mb-1"><strong>End:</strong> {formatForDisplay(event.end_time, "en-GB", "Asia/Bangkok")}</p>
                         {event.priority && (
                             <p className="mb-1"><strong>Priority:</strong> {event.priority}</p>
                         )}
 
-                        <div className="d-flex justify-content-end mt-3">
-                            <button className="btn btn-outline-primary btn-sm me-2" onClick={openModal}>Update</button>
+                        <div className="d-flex flex-wrap justify-content-end gap-2 mt-3">
+                            <button className="btn btn-outline-primary btn-sm" onClick={openModal}>Update</button>
                             <button className="btn btn-outline-danger btn-sm" onClick={handleDelete}>Delete</button>
                         </div>
                     </div>
@@ -148,7 +156,7 @@ export default function EventCard({ event, onDelete, onUpdate }) {
                     onClick={closeModal}
                 >
                     <div
-                        className="bg-white rounded-4 shadow-lg p-4"
+                        className="bg-white rounded-4 shadow-lg p-4 m-4"
                         style={{
                             width: "700px",
                             maxHeight: "80vh",

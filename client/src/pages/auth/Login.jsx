@@ -42,16 +42,17 @@ export default function Login() {
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center vh-100 w-100 bg-body-tertiary">
-            <div className="row w-75 h-50 shadow-lg rounded-4 overflow-hidden">
-                {/* Left content */}
-                <div className="col-6 bg-white d-flex flex-column align-items-center justify-content-center text-center">
+        <div className="d-flex justify-content-center align-items-center min-vh-100 w-100 bg-body-tertiary px-3">
+            <div className="row w-100 shadow-lg rounded-4 overflow-hidden" style={{ maxWidth: "900px" }}>
+                {/* Left */}
+                <div className="col-12 col-md-6 bg-white d-flex flex-column align-items-center justify-content-center text-center p-4">
                     <h2 className="fw-bold mb-2">Sign In</h2>
-                    <div className="d-flex flex-row gap-4 mb-2">
+                    <div className="d-flex flex-row gap-3 mb-3">
                         <SocialLoginButtons socialIcon={facebook} onClick={facebookLogin} />
                         <SocialLoginButtons socialIcon={google} onClick={googleLogin} />
                     </div>
                     <p className="text-muted small mb-4">Or use your email account</p>
+
                     <form className="w-100" style={{ maxWidth: "320px" }} onSubmit={handleLogin}>
                         <div className="mb-3">
                             <input
@@ -63,7 +64,7 @@ export default function Login() {
                                 required
                             />
                         </div>
-                        <div className="mb-1">
+                        <div className="mb-2">
                             <input
                                 type="password"
                                 className="form-control"
@@ -74,8 +75,8 @@ export default function Login() {
                             />
                         </div>
 
-                        <div className="mb-3">
-                            <a href="/forgot-password" className="small  text-muted">
+                        <div className="mb-3 text-center">
+                            <a href="/forgot-password" className="small text-muted">
                                 Forgot your password?
                             </a>
                         </div>
@@ -86,20 +87,20 @@ export default function Login() {
                     </form>
                 </div>
 
-                {/* Right content */}
-                <div className="col-6 bg-dark text-white p-5 d-flex flex-column align-items-center justify-content-center text-center">
+                {/* Right */}
+                <div className="col-12 col-md-6 bg-dark text-white p-5 d-flex flex-column align-items-center justify-content-center text-center">
                     <h2 className="fw-bold mb-2">Welcome to</h2>
-                    <h1 className="fw-bolder display-5">ORGA Flowlist</h1>
-                    <p className="mt-3 mb-5">
-                        Let’s create your own flow <br /> tasks, events, and plans in one
-                        place.
+                    <h1 className="fw-bolder display-6">ORGA Flowlist</h1>
+                    <p className="mt-3 mb-4 small">
+                        Let’s create your own flow of <br /> tasks, events, and plans in one place.
                     </p>
-                    <p className="text-light small">Don’t have an account yet?</p>
+                    <p className="text-light small mb-2">Don’t have an account yet?</p>
                     <a href="/register" className="btn btn-outline-light px-4">
                         Sign Up
                     </a>
                 </div>
             </div>
         </div>
+
     );
 }

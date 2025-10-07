@@ -34,9 +34,9 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="d-flex vh-100 justify-content-center align-items-center">
-      <div className="card p-4 shadow" style={{ width: "400px" }}>
-        <h3 className="mb-3">Reset Password</h3>
+    <div className="d-flex vh-100 justify-content-center align-items-center bg-body-tertiary px-3">
+      <div className="card p-4 shadow w-100" style={{ maxWidth: "400px" }}>
+        <h3 className="mb-3 text-center">Reset Password</h3>
         <form onSubmit={handleSubmit}>
 
           {/* Password */}

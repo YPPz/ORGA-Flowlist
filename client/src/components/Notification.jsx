@@ -40,15 +40,17 @@ export default function Notification() {
     const sortedEvents = [...upcomingEvents].sort(
         (a, b) => new Date(a.start_time) - new Date(b.start_time)
     );
-
     return (
         <div className="position-relative">
-            {/* 🔔 Notification */}
             <button
                 className="btn btn-light btn-sm position-relative"
                 onClick={() => setOpen((prev) => !prev)}
+                type="button"
             >
-                <img src={notification_icon} style={{ width: "1.3rem", height: "1.3rem" }} />
+                <img
+                    src={notification_icon}
+                    style={{ width: "1.3rem", height: "1.3rem" }}
+                />
                 {sortedEvents.length > 0 && (
                     <span
                         className="position-absolute start-100 translate-middle badge rounded-pill bg-danger"
@@ -59,24 +61,30 @@ export default function Notification() {
                 )}
             </button>
 
-            {/* Dropdown list */}
             {open && (
                 <div
-                    className="position-absolute end-0 mt-2 p-3 bg-white shadow rounded-3"
-                    style={{ width: "22rem", zIndex: 100 }}
+                    className="shadow bg-white rounded-3 p-3 position-absolute end-0 mt-1 w-100"
+                    style={{
+                        minWidth: "18rem",
+                        maxWidth: "90vw",
+                        zIndex: 1050,
+                    }}
                 >
                     {sortedEvents.length === 0 ? (
-                        <p className="text-center text-muted m-0">No upcoming events 🎉</p>
+                        <p className="text-center text-muted m-0">
+                            No upcoming events 🎉
+                        </p>
                     ) : (
                         <ul className="list-unstyled m-0">
-                            {sortedEvents.map(event => (
-                                <li key={event.event_id} className="mb-3 border-bottom pb-2">
+                            {sortedEvents.map((event) => (
+                                <li key={event.event_id} className="mb-2 border-bottom pb-2">
                                     <p className="mb-1 small text-muted">
                                         ⏰ Will start in {formatRemainingTime(event.start_time)}
                                     </p>
                                     <strong>{event.title}</strong>
                                     <p className="mb-0 small">
-                                        {formatForDisplay(event.start_time, "en-GB")} - {formatForDisplay(event.end_time, "en-GB")}
+                                        {formatForDisplay(event.start_time, "en-GB")} -{" "}
+                                        {formatForDisplay(event.end_time, "en-GB")}
                                     </p>
                                 </li>
                             ))}
