@@ -45,12 +45,13 @@ const appToGoogle = (data, existingGoogleEvent = {}) => {
  */
 
 export const listEventsRaw = async (user, googleAccessToken) => {
-  console.log(user, googleAccessToken)
   try {
+    // 🟢 Google Calendar logic
     if (user.provider === 'google' && googleAccessToken) {
       const googleEvents = await googleCalendar.listEvents(googleAccessToken);
       return googleEvents.map(e => googleToApp(e, user.user_id));
     }
+    // 🟢 Local DB logic
     return await Event.getEventsByUserId(user.user_id);
   } catch (err) {
     console.error("Error in listEventsRaw:", err);
@@ -67,21 +68,20 @@ export const createEventRaw = async (user, data, googleAccessToken) => {
       data.end_time = end;
     }
 
+    // 🟢 Google Calendar logic
     if (user.provider === 'google' && googleAccessToken) {
       const googleEventData = appToGoogle(data);
       const createdEvent = await googleCalendar.createEvent(googleAccessToken, googleEventData);
       return googleToApp(createdEvent, user.user_id);
     }
 
-    // 🟢 Local DB: transform format before use
-
+    // 🟢 Local DB logic
     const dbEventData = {
       ...data,
       start_time: dayjs(start).format("YYYY-MM-DD HH:mm:ss"),
       end_time: dayjs(end).format("YYYY-MM-DD HH:mm:ss"),
       user_id: user.user_id,
     };
-
     return await Event.createEvent(dbEventData);
 
   } catch (err) {
@@ -92,6 +92,7 @@ export const createEventRaw = async (user, data, googleAccessToken) => {
 
 export const updateEventRaw = async (user, eventId, data, googleAccessToken) => {
   try {
+    // 🟢 Google Calendar logic
     if (user.provider === 'google' && googleAccessToken) {
       const existingGoogleEvent = await googleCalendar.getEvent(googleAccessToken, eventId);
       const googleEventData = appToGoogle(data, existingGoogleEvent);
@@ -99,10 +100,17 @@ export const updateEventRaw = async (user, eventId, data, googleAccessToken) => 
       return googleToApp(updatedEvent, user.user_id);
     }
 
+    // 🟢 Local DB logic
     const event = await Event.getEventById(eventId);
     if (!event) throw new Error('Event not found');
-    if (event.user_id !== user.user_id) throw new Error('Not authorized');
-    return await Event.updateEvent(eventId, data);
+    
+    const dbEventData = {
+      ...data,
+      start_time: data.start_time ? dayjs(data.start_time).format("YYYY-MM-DD HH:mm:ss") : null,
+      end_time: data.end_time ? dayjs(data.end_time).format("YYYY-MM-DD HH:mm:ss") : null,
+    };
+
+    return await Event.updateEvent(eventId, dbEventData);
 
   } catch (err) {
     console.error("Error in updateEventRaw:", err);
@@ -112,13 +120,16 @@ export const updateEventRaw = async (user, eventId, data, googleAccessToken) => 
 
 export const deleteEventRaw = async (user, eventId, googleAccessToken) => {
   try {
+    // 🟢 Google Calendar logic
     if (user.provider === 'google' && googleAccessToken) {
       await googleCalendar.deleteEvent(googleAccessToken, eventId);
       return { success: true };
     }
+
+    // 🟢 Local DB logic
     const event = await Event.getEventById(eventId);
     if (!event) throw new Error('Event not found');
-    if (event.user_id !== user.user_id) throw new Error('Not authorized');
+
     await Event.deleteEvent(eventId);
     return { success: true };
 
