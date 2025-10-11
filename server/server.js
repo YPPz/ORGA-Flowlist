@@ -10,19 +10,18 @@ import userRoutes from './routes/users.js';
 import categoryRoutes from './routes/category.js';
 import assistRoutes from "./routes/assist.js";
 import eventRoutes from "./routes/event.js"
+import { scheduleDemoReset, checkDemoSession } from './middlewares/demoAccount.js';
 
 const app = express();
 
-// Middlewares
+// --- Global security & parsing middlewares ---
 app.use(helmet());
-
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 300,
   message: "Too many requests, please try again later."
 });
 app.use(limiter);
-
 app.use(express.json());
 
 app.use(cors({
@@ -32,6 +31,7 @@ app.use(cors({
   optionsSuccessStatus: 200
 }));
 
+// --- Session & Passport setup ---
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -47,14 +47,19 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// API Routes
-app.use("/api/assist", assistRoutes);
+// --- Auth routes (login / logout / etc.) ---
 app.use("/auth", authRoute);
+
+// --- Set session for Demo Account ---
+app.use(checkDemoSession);
+
+// --- Protected routes (ต้องตรวจ session ทุกครั้ง) ---
+app.use("/api/assist", assistRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/calendar", eventRoutes);
 app.use("/api/categories", categoryRoutes);
 
-// Error handling middleware
+// --- Error handling ---
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
@@ -64,7 +69,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Handle 404
+// --- 404 handler ---
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -72,11 +77,14 @@ app.use((req, res) => {
   });
 });
 
+// --- Start server ---
 const port = process.env.PORT || 5100;
-
 const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+// --- Demo reset data ---
+scheduleDemoReset();
 
 server.on('error', (error) => {
   if (error.code === 'EADDRINUSE') {

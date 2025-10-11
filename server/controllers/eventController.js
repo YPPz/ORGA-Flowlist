@@ -103,12 +103,14 @@ export const updateEventRaw = async (user, eventId, data, googleAccessToken) => 
     // 🟢 Local DB logic
     const event = await Event.getEventById(eventId);
     if (!event) throw new Error('Event not found');
-    
-    const dbEventData = {
-      ...data,
-      start_time: data.start_time ? dayjs(data.start_time).format("YYYY-MM-DD HH:mm:ss") : null,
-      end_time: data.end_time ? dayjs(data.end_time).format("YYYY-MM-DD HH:mm:ss") : null,
-    };
+
+    const dbEventData = {};
+    if (data.title !== undefined) dbEventData.title = data.title;
+    if (data.details !== undefined) dbEventData.details = data.details;
+    if (data.start_time !== undefined) dbEventData.start_time = dayjs(data.start_time).format("YYYY-MM-DD HH:mm:ss");
+    if (data.end_time !== undefined) dbEventData.end_time = dayjs(data.end_time).format("YYYY-MM-DD HH:mm:ss");
+    if (data.priority !== undefined) dbEventData.priority = data.priority;
+    if (data.category_id !== undefined) dbEventData.category_id = data.category_id;
 
     return await Event.updateEvent(eventId, dbEventData);
 

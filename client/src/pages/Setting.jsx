@@ -40,12 +40,12 @@ export default function Setting() {
     try {
       const res = await updateUser(user.user_id, { avatarFile });
       setUser({ ...user, avatar: res.data.avatar || user.avatar });
-      setMessage("Avatar updated successfully");
+      setMessage(res.message || "Avatar updated successfully");
       setAvatarFile(null);
       setAvatarEdit(false);
     } catch (err) {
       console.error(err);
-      setMessage("Failed to update avatar");
+      setMessage(err.message || "Failed to update avatar");
     }
     setAvatarLoading(false);
   };
@@ -57,11 +57,11 @@ export default function Setting() {
     try {
       await updateUser(user.user_id, { display_name: displayName });
       setUser({ ...user, display_name: displayName });
-      setMessage("Display name updated successfully");
+      setMessage(res.message || "Display name updated successfully");
       setDisplayNameEdit(false);
     } catch (err) {
       console.error(err);
-      setMessage("Failed to update display name");
+      setMessage(err.message || "Failed to update display name");
     }
     setDisplayNameLoading(false);
   };
@@ -76,14 +76,14 @@ export default function Setting() {
     setMessage("");
     try {
       await updateUser(user.user_id, { currentPassword, password: newPassword });
-      setMessage("Password updated successfully");
+      setMessage(res.message || "Password updated successfully");
       setPasswordEdit(false);
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
     } catch (err) {
       console.error(err);
-      setMessage("Failed to update password or Incorrect current password");
+      setMessage(err.message || "Failed to update password or Incorrect current password");
     }
     setPasswordLoading(false);
   };
@@ -106,7 +106,7 @@ export default function Setting() {
       window.location.href = "/login";
     } catch (err) {
       console.error(err);
-      setMessage("Failed to delete account");
+      setMessage(err.message || "Failed to delete account");
     }
   };
 

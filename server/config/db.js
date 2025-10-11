@@ -5,15 +5,13 @@ const db = mysql.createConnection({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306
+  port: process.env.DB_PORT || 21772
 });
-
-db.connect(err => {
-  if (err) {
-    console.error('Error connecting to MySQL:', err);
-  } else {
-    console.log('Connected to MySQL successfully!');
-  }
-});
+try {
+  db.connect();
+  console.log('✅ Connected ORGA_Flowlist_RailwayDB successfully!');
+} catch (err) {
+  console.error('❌ MySQL connection failed:', err);
+}
 
 export default db;

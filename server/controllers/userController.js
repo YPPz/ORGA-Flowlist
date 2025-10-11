@@ -63,6 +63,10 @@ export const updateUser = async (req, res) => {
       return res.status(403).json({ success: false, message: "Forbidden" });
     }
 
+    if (req.user.email === "demo@gmail.com") {
+      return res.status(403).json({ success: false, message: "Demo account cannot be changed" });
+    }
+
     console.log("req.body keys >>>", Object.keys(req.body));
     console.log("req.file >>>", req.file ? req.file.fieldname : null);
 
@@ -73,13 +77,13 @@ export const updateUser = async (req, res) => {
     }
 
     if (req.body.password) {
-      if (!req.body.currentPassword) {
-        return res.status(400).json({ success: false, message: "Current password is required" });
-      }
-
       const results = await User.getUserById(req.user.user_id);
       const user = results[0];
       if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+      if (!req.body.currentPassword) {
+        return res.status(400).json({ success: false, message: "Current password is required" });
+      }
 
       const isMatch = await bcrypt.compare(req.body.currentPassword, user.password);
       if (!isMatch) {
@@ -87,7 +91,6 @@ export const updateUser = async (req, res) => {
       }
 
       updateData.password = await bcrypt.hash(req.body.password, 10);
-
     }
 
     if (req.file) {
@@ -128,6 +131,10 @@ export const deleteUser = async (req, res) => {
     return res.status(403).json({ success: false, message: "Forbidden" });
   }
 
+  if (req.user.email === "demo@gmail.com") {
+    return res.status(403).json({ success: false, message: "Demo account cannot be deleted" });
+  }
+
   try {
     const [user] = await User.getUserById(req.user.user_id);
     if (!user) return res.status(404).json({ success: false, message: "User not found" });
@@ -158,7 +165,7 @@ export const deleteUser = async (req, res) => {
       } else {
         public_id = `avatars/user_${req.user.user_id}`;
       }
-      
+
       try {
         const result = await cloudinary.uploader.destroy(public_id);
         console.log("Cloudinary delete result:", result);
