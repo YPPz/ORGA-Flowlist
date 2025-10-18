@@ -5,11 +5,11 @@ const db = mysql.createConnection({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 21772
+  port: process.env.DB_PORT || 3306
 });
 try {
   db.connect();
-  console.log('✅ Connected ORGA_Flowlist_RailwayDB successfully!');
+  console.log('✅ Connected ORGA_Flowlist_DB successfully!');
 } catch (err) {
   console.error('❌ MySQL connection failed:', err);
 }

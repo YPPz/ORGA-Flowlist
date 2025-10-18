@@ -8,10 +8,13 @@ const router = express.Router();
 router.use(ensureAuth);
 router.use(ensureGoogleAccessToken);
 
-router.get('/events', listEvents);
-router.post('/events', createEvent);
-router.put('/events/:id', updateEvent);
-router.delete('/events/:id', deleteEvent);
+router.route("/events")
+    .get(listEvents)
+    .post(createEvent)
+
+router.route("/events/:id")
+    .put(updateEvent)
+    .delete(deleteEvent)
 
 export default router;
 

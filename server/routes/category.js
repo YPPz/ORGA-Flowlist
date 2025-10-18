@@ -4,9 +4,12 @@ import { ensureAuth } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-router.get("/", ensureAuth, getCategories);
-router.post("/", ensureAuth, createCategory);
-router.put("/:id", ensureAuth, updateCategory);
-router.delete("/:id", ensureAuth, deleteCategory);
+router.route("/")
+    .get(ensureAuth, getCategories)
+    .post(ensureAuth, createCategory)
+
+router.route("/:id")
+    .put(ensureAuth, updateCategory)
+    .delete(ensureAuth, deleteCategory)
 
 export default router;

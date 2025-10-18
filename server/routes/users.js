@@ -4,10 +4,12 @@ import { getAllUsers, getUserById, createUser, updateUser, deleteUser, uploadAva
 
 const router = express.Router();
 
-router.get("/", ensureAuth, getAllUsers);
-router.get("/:id", ensureAuth, getUserById);
-router.post("/", createUser);
-router.put("/:id", ensureAuth, uploadAvatarMiddleware, updateUser); 
-router.delete("/:id", ensureAuth, deleteUser);
+router.route("/")
+    .get(ensureAuth, getAllUsers)
+    .post(createUser)
+router.route("/:id")
+    .get(ensureAuth, getUserById)
+    .put(ensureAuth, uploadAvatarMiddleware, updateUser)
+    .delete(ensureAuth, deleteUser)
 
 export default router;
